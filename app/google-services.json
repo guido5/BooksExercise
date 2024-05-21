@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "504477059272",
+    "project_id": "booksexercise-37c86",
+    "storage_bucket": "booksexercise-37c86.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:504477059272:android:94abc20ec1eeef4dfdbdfd",
+        "android_client_info": {
+          "package_name": "com.guido.booksexercise"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "504477059272-dc45pmvrriso6jmsdlg30ig4la8q0mth.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQUBcZmlRrFmQvXgTEXjgM8xhpDY5rvdY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "504477059272-dc45pmvrriso6jmsdlg30ig4la8q0mth.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-package com.guido.booksexercise.ui
+package com.guido.booksexercise.ui.home
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
