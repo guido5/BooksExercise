@@ -15,11 +15,11 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class SignInWithGoogleUseCase
-@Inject constructor(val getCredentials: GetCredentials) {
+@Inject constructor(val getCredentials: GetCredentials) : FirebaseAuthUseCase(){
     private val TAG = SignInWithGoogleUseCase::class.java.canonicalName
     suspend fun login(firebaseState: FirebaseState) {
         getCredentials.result.catch { e ->
-            firebaseState.onFirebaseAuthError()
+            firebaseState.onFirebaseAuthError(e as Exception)
         }.collect {
             val credential = it.credential
             if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
@@ -29,11 +29,7 @@ class SignInWithGoogleUseCase
                         Firebase.auth
                             .signInWithCredential(GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null))
                             .addOnCompleteListener {
-                                if (it.isSuccessful) {
-                                    firebaseState.onFirebaseAuthSuccessfully()
-                                } else {
-                                    firebaseState.onFirebaseAuthError()
-                                }
+                                handlerResult(it, firebaseState)
                             }
                     } catch (e: ApiException) {
                         e.printStackTrace()

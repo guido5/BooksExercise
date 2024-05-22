@@ -7,15 +7,11 @@ import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
 @ViewModelScoped
-class SignUpWithEmailUseCase @Inject constructor(){
+class SignUpWithEmailUseCase @Inject constructor() : FirebaseAuthUseCase(){
     fun signUp(mailTextFiel: String, passwordTextField: String, firebaseState: FirebaseState) {
         Firebase.auth.createUserWithEmailAndPassword(mailTextFiel, passwordTextField)
             .addOnCompleteListener {
-                if(it.isSuccessful) {
-                    firebaseState.onFirebaseAuthSuccessfully()
-                } else {
-                    firebaseState.onFirebaseAuthError()
-                }
+                handlerResult(it, firebaseState)
             }
     }
 

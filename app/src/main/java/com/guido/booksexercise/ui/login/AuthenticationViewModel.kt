@@ -3,6 +3,8 @@ package com.guido.booksexercise.ui.login
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.guido.booksexercise.domain.SignInWithEmailUseCase
 import com.guido.booksexercise.domain.SignInWithGoogleUseCase
 import com.guido.booksexercise.domain.SignUpWithEmailUseCase
@@ -19,7 +21,8 @@ class AuthenticationViewModel
                     private val signUpWithEmailUseCase: SignUpWithEmailUseCase,
                     private val signInWithGoogleUseCase: SignInWithGoogleUseCase) : AndroidViewModel(app), FirebaseState {
 
-    private val _uiState = MutableStateFlow<AuthorizationUIState>(AuthorizationUIState.ErrorLogin(false))
+    private val _uiState =
+        MutableStateFlow<AuthorizationUIState>(AuthorizationUIState.ErrorLogin(false, null))
     val uiState: StateFlow<AuthorizationUIState> = _uiState
 
     fun signInWithEmail(mailTextFiel: String, passwordTextField: String) {
@@ -43,16 +46,21 @@ class AuthenticationViewModel
        _uiState.value = AuthorizationUIState.SuccessLogin
     }
 
-    override fun onFirebaseAuthError() {
-        _uiState.value = AuthorizationUIState.ErrorLogin(true)
+    override fun onFirebaseAuthError(ex: Exception) {
+        val message = when(ex) {
+            is FirebaseAuthInvalidCredentialsException -> {"El usuario o contraseña es incorrecto. Por favor intentalo de nuevo"}
+            is FirebaseAuthUserCollisionException -> {"El usuario ya se encuentra registrado"}
+            else -> {"Ocurrio un error inesperado. Por favor vuelve a intentarlo"}
+        }
+        _uiState.value = AuthorizationUIState.ErrorLogin(true, message)
     }
 
     fun dismiss() {
-        _uiState.value = AuthorizationUIState.ErrorLogin(false)
+        _uiState.value = AuthorizationUIState.ErrorLogin(false, null)
     }
 }
 
 interface FirebaseState {
     fun onFirebaseAuthSuccessfully()
-    fun onFirebaseAuthError()
+    fun onFirebaseAuthError(ex: Exception)
 }

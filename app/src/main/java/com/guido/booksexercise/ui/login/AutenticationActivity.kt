@@ -60,7 +60,8 @@ class AutenticationActivity : ComponentActivity() {
                     is AuthorizationUIState.ErrorLogin -> {
                         val alertEnable =
                             (state.value as AuthorizationUIState.ErrorLogin).isAlertEnable
-                        ResultDialog(show = alertEnable)
+                        val message = (state.value as AuthorizationUIState.ErrorLogin).message ?: ""
+                        ResultDialog(show = alertEnable, message)
                     }
                     is AuthorizationUIState.Loading -> {
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -169,7 +170,7 @@ class AutenticationActivity : ComponentActivity() {
         }
     }
 
-    @Composable fun ResultDialog(show: Boolean) {
+    @Composable fun ResultDialog(show: Boolean, message: String) {
         if(show) {
             AlertDialog(onDismissRequest = { /*TODO*/ },
                 confirmButton = {
@@ -178,7 +179,7 @@ class AutenticationActivity : ComponentActivity() {
                     }
                 },
                 title = { Text(text = getString(R.string.auth_error)) },
-                text = { Text(getString(R.string.auth_description)) })
+                text = { Text(message) })
         }
 
     }
