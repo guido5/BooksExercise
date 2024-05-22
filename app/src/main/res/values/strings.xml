@@ -4,4 +4,6 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="mail_title">Email</string>
     <string name="pass_title">Contraseña</string>
+    <string name="auth_error">Error de Autenticación</string>
+    <string name="auth_description">Ocurrio un problema para identificar tus credenciales. Vuelve a intentarlo.</string>
 </resources>

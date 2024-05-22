@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -26,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -52,10 +54,15 @@ class AutenticationActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             BooksExerciseTheme {
+                MainView()
                 val state = loginViewModel.uiState.collectAsState()
                 when(state.value) {
-                    AuthorizationUIState.ErrorLogin -> {}
-                    AuthorizationUIState.Loading -> {
+                    is AuthorizationUIState.ErrorLogin -> {
+                        val alertEnable =
+                            (state.value as AuthorizationUIState.ErrorLogin).isAlertEnable
+                        ResultDialog(show = alertEnable)
+                    }
+                    is AuthorizationUIState.Loading -> {
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             CircularProgressIndicator()
                         }
@@ -65,9 +72,6 @@ class AutenticationActivity : ComponentActivity() {
                         startActivity(intent)
                         finish()
                     }
-                    AuthorizationUIState.Init -> {
-                        MainView()
-                    }
                 }
             }
         }
@@ -75,14 +79,17 @@ class AutenticationActivity : ComponentActivity() {
 
     @Composable fun MainView() {
         var mailTextFiel by remember { mutableStateOf("") }
-        var password by rememberSaveable { mutableStateOf("") }
+        var passwordTextField by rememberSaveable { mutableStateOf("") }
         var passwordVisible by rememberSaveable { mutableStateOf(false) }
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Column(Modifier.fillMaxWidth().padding(4.dp)) {
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)) {
 
                     OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = mailTextFiel, onValueChange = {
                         mailTextFiel = it
@@ -92,8 +99,8 @@ class AutenticationActivity : ComponentActivity() {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     OutlinedTextField(modifier = Modifier.fillMaxWidth(),
-                        value = password,
-                        onValueChange = { password = it },
+                        value = passwordTextField,
+                        onValueChange = { passwordTextField = it },
                         label = { Text(text = getString(R.string.pass_title)) },
                         singleLine = true,
                         placeholder = { Text(getString(R.string.pass_title)) },
@@ -120,11 +127,11 @@ class AutenticationActivity : ComponentActivity() {
                             .height(50.dp), verticalAlignment = Alignment.CenterVertically) {
                         EmailButtonSignIn(modifier = Modifier
                             .fillMaxSize()
-                            .weight(1f))
+                            .weight(1f), mailTextFiel, passwordTextField)
                         Spacer(modifier = Modifier.width(8.dp))
                         EmailButtonSignUp(modifier = Modifier
                             .fillMaxSize()
-                            .weight(1f))
+                            .weight(1f), mailTextFiel, passwordTextField)
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     GoogleButtonSignIn()
@@ -134,18 +141,18 @@ class AutenticationActivity : ComponentActivity() {
     }
 
     private @Composable
-    fun EmailButtonSignUp(modifier: Modifier) {
+    fun EmailButtonSignUp(modifier: Modifier, mailTextFiel: String, passwordTextField: String) {
         Button(onClick = {
-
+            loginViewModel.signUpWithEmail(mailTextFiel, passwordTextField)
         }, modifier = modifier) {
             Text(text = "Registrarse" )
         }
     }
 
     private @Composable
-    fun EmailButtonSignIn(modifier: Modifier) {
+    fun EmailButtonSignIn(modifier: Modifier,  mailTextFiel: String, passwordTextField: String) {
         Button(onClick = {
-
+            loginViewModel.signInWithEmail(mailTextFiel, passwordTextField)
         }, modifier = modifier) {
             Text(text = "Iniciar Sesion" )
         }
@@ -160,5 +167,19 @@ class AutenticationActivity : ComponentActivity() {
             .height(50.dp)) {
             Text(text = "Continuar con Google" )
         }
+    }
+
+    @Composable fun ResultDialog(show: Boolean) {
+        if(show) {
+            AlertDialog(onDismissRequest = { /*TODO*/ },
+                confirmButton = {
+                    TextButton(onClick = { loginViewModel.dismiss() }) {
+                        Text(text = "Aceptar")
+                    }
+                },
+                title = { Text(text = getString(R.string.auth_error)) },
+                text = { Text(getString(R.string.auth_description)) })
+        }
+
     }
 }
