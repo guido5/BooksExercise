@@ -6,20 +6,40 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.guido.booksexercise.R
 import com.guido.booksexercise.ui.home.MainActivity
 import com.guido.booksexercise.ui.theme.BooksExerciseTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,23 +74,87 @@ class AutenticationActivity : ComponentActivity() {
     }
 
     @Composable fun MainView() {
-        // A surface container using the 'background' color from the theme
+        var mailTextFiel by remember { mutableStateOf("") }
+        var password by rememberSaveable { mutableStateOf("") }
+        var passwordVisible by rememberSaveable { mutableStateOf(false) }
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Row {
+                Column(Modifier.fillMaxWidth().padding(4.dp)) {
+
+                    OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = mailTextFiel, onValueChange = {
+                        mailTextFiel = it
+                    }, label = {
+                        Text(text = getString(R.string.mail_title))
+                    },)
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(modifier = Modifier.fillMaxWidth(),
+                        value = password,
+                        onValueChange = { password = it },
+                        label = { Text(text = getString(R.string.pass_title)) },
+                        singleLine = true,
+                        placeholder = { Text(getString(R.string.pass_title)) },
+                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        trailingIcon = {
+                            val image = if (passwordVisible)
+                                Icons.Filled.Visibility
+                            else Icons.Filled.VisibilityOff
+
+                            // Please provide localized description for accessibility services
+                            val description = if (passwordVisible) "Hide password" else "Show password"
+
+                            IconButton(onClick = {passwordVisible = !passwordVisible}){
+                                Icon(imageVector  = image, description)
+                            }
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(50.dp), verticalAlignment = Alignment.CenterVertically) {
+                        EmailButtonSignIn(modifier = Modifier
+                            .fillMaxSize()
+                            .weight(1f))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        EmailButtonSignUp(modifier = Modifier
+                            .fillMaxSize()
+                            .weight(1f))
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
                     GoogleButtonSignIn()
                 }
             }
         }
     }
 
+    private @Composable
+    fun EmailButtonSignUp(modifier: Modifier) {
+        Button(onClick = {
+
+        }, modifier = modifier) {
+            Text(text = "Registrarse" )
+        }
+    }
+
+    private @Composable
+    fun EmailButtonSignIn(modifier: Modifier) {
+        Button(onClick = {
+
+        }, modifier = modifier) {
+            Text(text = "Iniciar Sesion" )
+        }
+    }
+
     @Composable
     fun GoogleButtonSignIn() {
         Button(onClick = {
-                     loginViewModel.signIn()
+                     loginViewModel.signInWithGoogle()
         }, modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)) {

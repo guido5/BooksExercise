@@ -13,12 +13,12 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthenticationViewModel
 @Inject constructor(app: Application,
-                val signInWithGoogleUseCase: SignInWithGoogleUseCase) : AndroidViewModel(app), FirebaseState {
+                    private val signInWithGoogleUseCase: SignInWithGoogleUseCase) : AndroidViewModel(app), FirebaseState {
 
     private val _uiState = MutableStateFlow<AuthorizationUIState>(AuthorizationUIState.Init)
     val uiState: StateFlow<AuthorizationUIState> = _uiState
 
-    fun signIn() {
+    fun signInWithGoogle() {
         viewModelScope.launch {
             _uiState.value = AuthorizationUIState.Loading
             signInWithGoogleUseCase.login(this@AuthenticationViewModel)
