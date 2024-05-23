@@ -1,4 +1,4 @@
-package com.guido.booksexercise.domain.credentialManager
+package com.guido.booksexercise.data.credentialManager
 
 import android.content.Context
 import androidx.credentials.GetCredentialRequest

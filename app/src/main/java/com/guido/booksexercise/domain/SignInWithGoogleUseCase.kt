@@ -7,7 +7,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingExcept
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.guido.booksexercise.domain.credentialManager.GetCredentials
+import com.guido.booksexercise.data.credentialManager.GetCredentials
 import com.guido.booksexercise.ui.login.FirebaseState
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.catch

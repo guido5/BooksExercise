@@ -70,6 +70,8 @@ dependencies {
 
     //Libraries added
     implementation libs.retrofit
+    implementation libs.okhttp
+    implementation libs.logging.interceptor
     implementation libs.coroutines
     implementation libs.coroutines.android
     implementation libs.gson
@@ -100,6 +102,7 @@ dependencies {
     implementation libs.androidx.credentials.play.services.auth
     implementation libs.googleid
     implementation libs.androidx.material.icons.extended
+    implementation libs.androidx.navigation.compose
 
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
