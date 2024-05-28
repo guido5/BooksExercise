@@ -19,7 +19,7 @@ data class VolumeInfo(
     val publishedDate: String,
     val description: String?,
     val pageCount: Long,
-    val categories: List<String>,
+    val categories: List<String>?,
     val imageLinks: ImageLinks?,
 )
 
