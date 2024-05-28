@@ -8,7 +8,7 @@ data class Books(val id: String,
                  val publishedDate: String,
                  val description: String?,
                  val pageCount: Long,
-                 val categories: List<String>,
+                 val categories: List<String>?,
                  val smallThumbnail: String?,
                  val thumbnail: String?,
                  val updated: String?)
