@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -82,5 +83,6 @@ fun validateQuery(string: String, viewModel: MainViewModel) {
 enum class BottomOptions(val label: String, val route: String, val icon: ImageVector) {
     MY_BOOKS("Mis Libros", "myBooks", Icons.Filled.Home),
     FAVORITES("Favoritos", "myFavorites", Icons.Filled.Favorite),
-    SEARCH("Buscar", "search", Icons.Filled.Search)
+    SEARCH("Buscar", "search", Icons.Filled.Search),
+    SETTINGS("Configuración", "settings", Icons.Filled.Settings)
 }

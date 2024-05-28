@@ -1,6 +1,7 @@
 package com.guido.booksexercise.ui.home
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,18 +28,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
+import androidx.credentials.ClearCredentialStateRequest
+import androidx.credentials.CredentialManager
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.guido.booksexercise.data.Books
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.guido.booksexercise.ui.login.AutenticationActivity
 import com.guido.booksexercise.ui.theme.BooksExerciseTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -85,7 +96,10 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }) {
-            NavHost(navController = navController, startDestination = BottomOptions.MY_BOOKS.route) {
+            NavHost(
+                navController = navController,
+                startDestination = BottomOptions.MY_BOOKS.route
+            ) {
                 composable(BottomOptions.MY_BOOKS.route) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text(text = BottomOptions.MY_BOOKS.label)
@@ -99,7 +113,34 @@ class MainActivity : ComponentActivity() {
                 composable(BottomOptions.SEARCH.route) {
                     SearchView(mainViewModel)
                 }
+
+                composable(BottomOptions.SETTINGS.route) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        SettingsOptions()
+                    }
+                }
             }
         }
+    }
+
+    @Composable
+    fun SettingsOptions() {
+        Column {
+            val current = LocalContext.current
+            Button(onClick = {
+                signOut()
+            }) {
+                Text(text = "Salir")
+            }
+        }
+    }
+
+    private fun signOut() {
+        Firebase.auth.signOut()
+        lifecycleScope.launch {
+            CredentialManager.create(this@MainActivity).clearCredentialState(ClearCredentialStateRequest())
+        }
+        startActivity(Intent(this, AutenticationActivity::class.java))
+        finish()
     }
 }
