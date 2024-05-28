@@ -7,13 +7,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -27,10 +30,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.guido.booksexercise.data.Books
 import com.guido.booksexercise.ui.theme.BooksExerciseTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -92,24 +97,9 @@ class MainActivity : ComponentActivity() {
                 }
 
                 composable(BottomOptions.SEARCH.route) {
-                    SearchView()
+                    SearchView(mainViewModel)
                 }
             }
         }
     }
-}
-
-@Composable fun SearchView() {
-    Column {
-//        SearchBar(query =, onQueryChange =, onSearch =, active =, onActiveChange =) {
-//
-//        }
-//        LazyColumn(content =)
-    }
-}
-
-enum class BottomOptions(val label: String, val route: String, val icon: ImageVector) {
-    MY_BOOKS("Mis Libros", "myBooks", Icons.Filled.Home),
-    FAVORITES("Favoritos", "myFavorites", Icons.Filled.Favorite),
-    SEARCH("Buscar", "search", Icons.Filled.Search)
 }
