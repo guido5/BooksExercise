@@ -13,6 +13,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.catch
 import javax.inject.Inject
 
+
 @ViewModelScoped
 class SignInWithGoogleUseCase
 @Inject constructor(val getCredentials: GetCredentials) : FirebaseAuthUseCase(){
@@ -29,6 +30,8 @@ class SignInWithGoogleUseCase
                         Firebase.auth
                             .signInWithCredential(GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null))
                             .addOnCompleteListener {
+                                val token = it.result.user?.getIdToken(false)?.result?.token
+                                println(token)
                                 handlerResult(it, firebaseState)
                             }
                     } catch (e: ApiException) {

@@ -1,9 +1,14 @@
 package com.guido.booksexercise.ui.login
 
 import android.content.Intent
+import android.content.IntentSender.SendIntentException
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,10 +46,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.auth.api.identity.AuthorizationRequest
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.common.api.Scope
 import com.guido.booksexercise.R
 import com.guido.booksexercise.ui.home.MainActivity
 import com.guido.booksexercise.ui.theme.BooksExerciseTheme
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class AutenticationActivity : ComponentActivity() {
@@ -68,13 +77,49 @@ class AutenticationActivity : ComponentActivity() {
                             CircularProgressIndicator()
                         }
                     }
-                    AuthorizationUIState.SuccessLogin -> {
-                        val intent = Intent(this@AutenticationActivity, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
+                    is AuthorizationUIState.SuccessLogin -> {
+                        val authorizationRequest = AuthorizationRequest.Builder()
+                            .setRequestedScopes(listOf(Scope("https://www.googleapis.com/auth/books")))
+                            .build()
+                        Identity.getAuthorizationClient(this)
+                            .authorize(authorizationRequest)
+                            .addOnSuccessListener { authorizationResult ->
+                                if (authorizationResult.hasResolution()) {
+                                    // Access needs to be granted by the user
+                                    val pendingIntent = authorizationResult.pendingIntent
+                                    try {
+                                        pendingIntent?.let {
+                                            launcher.launch(IntentSenderRequest.Builder(it.intentSender).build())
+                                        }
+                                    } catch (e: SendIntentException) {
+                                        Log.e(
+                                            "AutenticationActivity",
+                                            "Couldn't start Authorization UI: " + e.localizedMessage
+                                        )
+                                    }
+                                } else {
+                                    // Access already granted, continue with user action
+                                    openMainActivity()
+                                }
+                            }
+                            .addOnFailureListener { e -> Log.e("AutenticationActivity", "Failed to authorize", e) }
                     }
                 }
             }
+        }
+    }
+
+    private fun openMainActivity() {
+        val intent = Intent(this@AutenticationActivity, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private val launcher = registerForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()) { result: ActivityResult ->
+        if (result.resultCode == RESULT_OK) {
+            val data = result.data
+            openMainActivity()
         }
     }
 
@@ -92,11 +137,15 @@ class AutenticationActivity : ComponentActivity() {
                         .fillMaxWidth()
                         .padding(4.dp)) {
 
-                    OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = mailTextFiel, onValueChange = {
-                        mailTextFiel = it
-                    }, label = {
-                        Text(text = getString(R.string.mail_title))
-                    },)
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(), value = mailTextFiel,
+                        onValueChange = {
+                            mailTextFiel = it
+                        },
+                        label = {
+                            Text(text = getString(R.string.mail_title))
+                        },
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
 
                     OutlinedTextField(modifier = Modifier.fillMaxWidth(),

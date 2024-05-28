@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">BooksExercise</string>
-    <string name="WEB_CLIENT_ID">504477059272-dc45pmvrriso6jmsdlg30ig4la8q0mth.apps.googleusercontent.com</string>
+    <string name="WEB_CLIENT_ID">504477059272-plfd94387homcchha0rbrf3cf520pjkq.apps.googleusercontent.com</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="mail_title">Email</string>
     <string name="pass_title">Contraseña</string>
